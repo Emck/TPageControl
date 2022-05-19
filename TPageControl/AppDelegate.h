@@ -6,7 +6,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "TPageControl.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate, TPageControlDelegate>
 
 @end
