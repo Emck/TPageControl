@@ -48,9 +48,9 @@ typedef NS_ENUM(NSUInteger, TPCStyle) {
 
 @interface TPageControl : NSView <NSAnimationDelegate>
 
-- (instancetype)initWithParentsView:(NSView *)parentsView Style:(TPCStyle)style Height:(NSInteger)height;
+- (instancetype)initWithParentsView:(NSView *)parentsView Style:(TPCStyle)style Height:(NSInteger)height BackgroundColor:(NSColor *)backgroundColor;
 
-@property (nullable,  weak  ) id<TPageControlDelegate> delegate;    // TPageControl Delegate
+@property (nonatomic, strong) id<TPageControlDelegate> delegate;    // TPageControl Delegate
 
 @property (nonatomic, assign) int      numberOfPages;       // total pages
 @property (nonatomic, assign) int      currentPage;         // current page

@@ -37,17 +37,29 @@
 
 @implementation TPageControl
 
-- (instancetype)initWithParentsView:(NSView *)parentsView Style:(TPCStyle)style Height:(NSInteger)height {
+
+- (instancetype)initWithParentsView:(NSView *)parentsView Style:(TPCStyle)style Height:(NSInteger)height BackgroundColor:(NSColor *)backgroundColor {
     if (style == TPCStyleTop) self = [super initWithFrame:NSMakeRect(0, parentsView.frame.size.height - height, parentsView.frame.size.width, height)];
     else self = [super initWithFrame:NSMakeRect(0, 0, parentsView.frame.size.width, height)];       // default bottom
     
     if (self) {
+        // default style
         self.currentDotColor = [NSColor blackColor];        // default select dot color
         self.otherDotColor   = [NSColor lightGrayColor];    // default not select dot color
+        self.dotHeight = 10;                                // dot Height
+        self.dotSpace = 24;                                 // dot space
+        self.cornerRadius = 5;                              // dot Radius
+        self.currentDotWidth = 20;                          // select dot width
+        self.otherDotWidth = 10;                            // not select dot width
+        self.buttonRadius    = 8;                           // default button Radius
+        // inside parameter
         self.isInitialize    = YES;                         // need Initialize
         self.inAnimating     = NO;
         self.dotViewArrayM   = [NSMutableArray array];      // alloc Array
-        self.buttonRadius    = 8;                           // default button Radius
+        // set backgroundColor
+        self.wantsLayer = YES;
+        self.layer.backgroundColor = [backgroundColor CGColor];
+
     }
     return self;
 }
