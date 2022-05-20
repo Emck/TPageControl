@@ -14,12 +14,11 @@
 
 - (void)setTitleWithColor:(NSString *)title Color:(NSColor *)color {
     [super setTitle:title];
-    if (color != nil) {
-        NSMutableAttributedString *colorTitle = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
-        NSRange rtitleRange = NSMakeRange(0, [colorTitle length]);
-        [colorTitle addAttribute:NSForegroundColorAttributeName value:color range:rtitleRange];
-        [self setAttributedTitle:colorTitle];
-    }
+    if (color == nil) return;
+    NSMutableAttributedString *colorTitle = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
+    NSRange rtitleRange = NSMakeRange(0, [colorTitle length]);
+    [colorTitle addAttribute:NSForegroundColorAttributeName value:color range:rtitleRange];
+    [self setAttributedTitle:colorTitle];
 }
 
 @end
@@ -46,12 +45,13 @@
         // default style
         self.currentDotColor = [NSColor blackColor];        // default select dot color
         self.otherDotColor   = [NSColor lightGrayColor];    // default not select dot color
-        self.dotHeight = 10;                                // dot Height
-        self.dotSpace = 24;                                 // dot space
-        self.cornerRadius = 5;                              // dot Radius
+        self.dotHeight       = 10;                          // dot Height
+        self.dotSpace        = 24;                          // dot space
+        self.cornerRadius    = 5;                           // dot Radius
         self.currentDotWidth = 20;                          // select dot width
-        self.otherDotWidth = 10;                            // not select dot width
+        self.otherDotWidth   = 10;                          // not select dot width
         self.buttonRadius    = 8;                           // default button Radius
+        self.buttonSpace     = 40;                          // default button space
         // inside parameter
         self.isInitialize    = YES;                         // need Initialize
         self.inAnimating     = NO;
@@ -59,7 +59,6 @@
         // set backgroundColor
         self.wantsLayer = YES;
         self.layer.backgroundColor = [backgroundColor CGColor];
-
     }
     return self;
 }
@@ -74,28 +73,29 @@
     pageButton.target = self;
     pageButton.action = @selector(buttonClick:);
     pageButton.hidden = YES;
+    CGFloat x = self.frame.size.width - (size.width + self.buttonSpace);    // count left space
+    CGFloat y = (self.frame.size.height - size.height) / 2;                 // count right space
     switch (style) {
         case TPCButtonLeft:
-            pageButton.frame = CGRectMake(20, 15, size.width, size.height);
-            self.leftButton = pageButton;
+            pageButton.frame = CGRectMake(self.buttonSpace, y, size.width, size.height);
+            self.leftButton = pageButton;       // save left button
             break;
         case TPCButtonRight:
-            pageButton.frame = CGRectMake(self.superview.frame.size.width - 106, 15, size.width, size.height);
-            self.rightButton = pageButton;
+            pageButton.frame = CGRectMake(x, y, size.width, size.height);
+            self.rightButton = pageButton;      // save right button
             break;
         case TPCButtonEnding:
-            pageButton.frame = CGRectMake(self.superview.frame.size.width - 106, 15, size.width, size.height);
-            self.endingButton = pageButton;
+            pageButton.frame = CGRectMake(x, y, size.width, size.height);
+            self.endingButton = pageButton;     // save ending button
             break;
         default: break;
     }
-    [self addSubview:pageButton];
+    [self addSubview:pageButton];               // add button to Subview
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
-
-    [self updateView];              // update Views
+    [self updateView];                          // update Views
 }
 
 - (void)updateView {
@@ -115,25 +115,20 @@
         dotView.frame = CGRectMake(x, y, width, height);
 
         currentX = currentX + width + self.dotSpace; // next dot X position
-
+        
         // update color
         dotView.layer.backgroundColor = self.otherDotColor.CGColor;
         if (i == self.currentPage) dotView.layer.backgroundColor = self.currentDotColor.CGColor;
     }
-    
-    if (self.leftButton != nil) self.leftButton.hidden = YES;
-    if (self.rightButton != nil) self.rightButton.hidden = NO;
-    if (self.endingButton != nil) self.endingButton.hidden = YES;
+    if (self.leftButton != nil) self.leftButton.hidden = YES;       // default hidden
+    if (self.rightButton != nil) self.rightButton.hidden = NO;      // default show
+    if (self.endingButton != nil) self.endingButton.hidden = YES;   // default hidden
 }
 
 - (void)buttonClick:(id) button {
-    if (self.leftButton == button) {
-        self.currentPage = (self.currentPage -1 + self.numberOfPages) % self.numberOfPages;
-    }
-    else if (self.rightButton == button) {
-        self.currentPage = (self.currentPage + 1 + self.numberOfPages) % self.numberOfPages;
-    }
-    else if (self.endingButton == button) {
+    if (self.leftButton == button) self.currentPage = (self.currentPage -1 + self.numberOfPages) % self.numberOfPages;          // go to previous
+    else if (self.rightButton == button) self.currentPage = (self.currentPage + 1 + self.numberOfPages) % self.numberOfPages;   // go to next
+    else if (self.endingButton == button) {                                                                                     // click ending
         if (_delegate && [_delegate respondsToSelector: @selector(pageControl:didClickEndingButton:)])
             [_delegate pageControl: self didClickEndingButton: self.endingButton];  // Call delegate
     }
@@ -143,7 +138,7 @@
     _numberOfPages = numberOfPages;
     
     if (self.dotViewArrayM.count > 0) {     // clean view array
-        [self.dotViewArrayM enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.dotViewArrayM enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
              [(NSView *)obj removeFromSuperview];
          }];
         [self.dotViewArrayM removeAllObjects];
@@ -156,7 +151,6 @@
         [self addSubview:dotView];
         [self.dotViewArrayM addObject:dotView];             // save dot view into array
     }
-
     self.isInitialize = YES;    // flag need Initialize
     [self updateLayer];         // update view to screen
 }
@@ -165,22 +159,26 @@
     if (currentPage < 0 || currentPage >= self.dotViewArrayM.count ||self.dotViewArrayM.count == 0 || currentPage == self.currentPage || self.inAnimating) {
         return;
     }
-    if (currentPage ==0) {
-        self.leftButton.hidden = YES;
-        self.rightButton.hidden = NO;
-        self.endingButton.hidden = YES;
+    if (currentPage ==0) {                                          // is begin page
+        self.leftButton.hidden = YES;       // hidden left button
+        self.rightButton.hidden = NO;       // show right button
+        self.endingButton.hidden = YES;     // hidden ending button
     }
-    else if (currentPage >0 && currentPage < _numberOfPages -1) {
-        self.leftButton.hidden = NO;
-        self.rightButton.hidden = NO;
-        self.endingButton.hidden = YES;
+    else if (currentPage >0 && currentPage < _numberOfPages -1) {   // is middle page
+        self.leftButton.hidden = NO;        // show left button
+        self.rightButton.hidden = NO;       // show right button
+        self.endingButton.hidden = YES;     // hidden ending button
     }
-    else if (currentPage == _numberOfPages -1) {
-        self.leftButton.hidden = NO;
-        self.rightButton.hidden = YES;
-        self.endingButton.hidden = NO;
+    else if (currentPage == _numberOfPages -1) {                    // is end page
+        self.leftButton.hidden = NO;        // show left button
+        self.rightButton.hidden = YES;      // hidden right button
+        self.endingButton.hidden = NO;      // show ending button
     }
+    // will change page
+    if (_delegate && [_delegate respondsToSelector: @selector(pageControl:didWillSelectPageAtIndex:)])
+        [_delegate pageControl: self didWillSelectPageAtIndex: currentPage];       // Call delegate
     
+    // begin change page
     NSView *currentView = self.dotViewArrayM[self.currentPage];
     [currentView removeFromSuperview];
     [self addSubview:currentView positioned:NSWindowAbove relativeTo:nil];

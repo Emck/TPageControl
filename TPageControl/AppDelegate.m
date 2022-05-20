@@ -30,8 +30,8 @@
     //self.pageControl.otherDotWidth = 10;                        // not select dot width
     //self.pageControl.buttonRadius = 8;                          // button radius
     [self.pageControl initButton:TPCButtonLeft   Size:CGSizeMake(86, 22) Title:@"Previous"   Color:[NSColor blackColor] BackgroundColor:[NSColor whiteColor]];
-    [self.pageControl initButton:TPCButtonRight  Size:CGSizeMake(86, 22) Title:@"Next"       Color:[NSColor whiteColor] BackgroundColor:[NSColor colorWithRed:136 green:193 blue:170 alpha:0.8]];
-    [self.pageControl initButton:TPCButtonEnding Size:CGSizeMake(86, 22) Title:@"Close Tour" Color:[NSColor whiteColor] BackgroundColor:[NSColor colorWithRed:136 green:193 blue:170 alpha:0.8]];
+    [self.pageControl initButton:TPCButtonRight  Size:CGSizeMake(86, 22) Title:@"Next"       Color:[NSColor whiteColor] BackgroundColor:[NSColor systemBrownColor]];
+    [self.pageControl initButton:TPCButtonEnding Size:CGSizeMake(86, 22) Title:@"Close Tour" Color:[NSColor whiteColor] BackgroundColor:[NSColor systemTealColor]];
     self.pageControl.numberOfPages = 5;                         // total pages
 }
 
@@ -41,6 +41,10 @@
 
 - (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app {
     return YES;
+}
+
+- (void)pageControl:(TPageControl *)pageControl didWillSelectPageAtIndex:(NSInteger)index {
+    NSLog(@"Page NO: %ld - Will",index);
 }
 
 - (void)pageControl:(TPageControl *)pageControl didSelectPageAtIndex:(NSInteger)index {

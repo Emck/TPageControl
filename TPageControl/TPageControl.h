@@ -29,12 +29,13 @@ typedef NS_ENUM(NSUInteger, TPageAnimationType) {
 // TPageControl Delegate
 @protocol TPageControlDelegate <NSObject>
 @optional
--(void)pageControl: (TPageControl *)pageControl didSelectPageAtIndex: (NSInteger)index;
--(void)pageControl: (TPageControl *)pageControl didClickEndingButton: (nonnull id) sender;
+-(void)pageControl: (TPageControl *)pageControl didWillSelectPageAtIndex: (NSInteger)index;
+-(void)pageControl: (TPageControl *)pageControl didSelectPageAtIndex    : (NSInteger)index;
+-(void)pageControl: (TPageControl *)pageControl didClickEndingButton    : (nonnull id) sender;
 @end
 
 @interface TPageButton : NSButton
-- (void)setTitleWithColor:(NSString *)title Color:(NSColor *)color;
+- (void)setTitleWithColor:(NSString *)title Color:(NSColor *)color; // set button title and title color
 @end
 
 // TPageControl Style
@@ -62,6 +63,7 @@ typedef NS_ENUM(NSUInteger, TPCStyle) {
 @property (nonatomic, assign) CGFloat  currentDotWidth;     // select dot width
 @property (nonatomic, assign) CGFloat  otherDotWidth;       // not select dot width
 @property (nonatomic, assign) CGFloat  buttonRadius;        // button radius
+@property (nonatomic, assign) CGFloat  buttonSpace;         // button Spaces
 
 // init button style(TPCButtonLeft,TPCButtonRight,TPCButtonEnding) with title and color
 - (void)initButton:(TPCStyle)style Size:(CGSize)size Title:(NSString *)title Color:(NSColor *)color BackgroundColor:(NSColor *)backgroundColor;
